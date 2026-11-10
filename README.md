@@ -1,107 +1,255 @@
+<div align="center">
+
 # Sillage
 
-Une application locale pour macOS : transformer l’audio de vidéos YouTube en WAV ou MP3, à l’unité ou par playlist.
+### Le son, simplement. Sur ton Mac.
 
-## Fonctionnalités
+Transformez l’audio d’une vidéo YouTube en WAV ou MP3.<br>
+Préparez une playlist entière ou retrouvez les vidéos d’une liste de titres.
 
-- **Vidéo** : lien YouTube, conversion WAV/MP3, écoute et enregistrement.
-- **Playlist YouTube** : lecture de la liste, sélection, téléchargement séquentiel et dossier numéroté.
-- **Import Musique** : export XML ou texte de Musique sur Mac, ou liste `Artiste | Titre | Version` ; recherche de propositions sur YouTube.
-- Choix des correspondances, lien manuel, arrêt/reprise et historique local.
-- Interface française, thème clair/sombre de macOS et fenêtre native.
+**macOS · WAV & MP3 · Playlists · Conversion locale**
 
-## Installer sur Mac (utilisateur)
+[Télécharger](#installation-facile-recommandée) · [Utiliser](#utilisation) · [Comprendre](#comment-fonctionne-sillage) · [Dépannage](#dépannage) · [Cadre d’utilisation](#cadre-juridique-et-utilisation-responsable)
 
-1. Télécharge `Sillage-<version>-arm64.dmg` (Apple Silicon) ou `-x86_64.dmg` (Intel) depuis les Releases.
-2. Ouvre le DMG et glisse **Sillage** dans **Applications**.
-3. Lance Sillage. Rien d’autre à installer : Python, yt-dlp, FFmpeg et Node.js sont inclus.
+</div>
 
-Si la version n’est pas notarisée, macOS bloque le premier lancement :
-- macOS 15 et plus récent : ouvre Sillage une fois, puis **Réglages Système → Confidentialité et sécurité → Ouvrir quand même**.
-- macOS 13 et 14 : **clic droit sur Sillage → Ouvrir → Ouvrir**.
+---
 
-Historique et audios : `~/Library/Application Support/Sillage`. Journal : `sillage.log` dans ce dossier.
+## Présentation
 
-## Créer le DMG (développeur)
+Sillage est une application pour macOS qui réunit dans une même interface la récupération d’audio sur YouTube, sa conversion et son organisation sur le Mac.
 
-Prérequis sur le Mac de build : outils Apple (`xcode-select --install`) et Python 3.10+ installé depuis python.org (les Python Homebrew sont compilés pour ta version de macOS et peuvent refuser de tourner sur des Mac plus anciens).
+Le projet est né d’un besoin concret autour de la musique et du DJing : disposer d’un outil simple pour préparer des fichiers audio, choisir leur format et traiter plusieurs titres sans répéter chaque manipulation à la main.
 
-```sh
-zsh "Construire le DMG.command"
+L’application fonctionne dans sa propre fenêtre Mac autonome. Les recherches et téléchargements nécessitent Internet ; la conversion est effectuée en local sur votre ordinateur. Aucun compte Sillage ni clé d’API n’est nécessaire.
+
+> **À savoir avant de commencer**
+>
+> Sillage doit être utilisé uniquement lorsque le téléchargement et l’utilisation du contenu sont autorisés. La conversion en WAV ne transforme pas une source YouTube en enregistrement de qualité studio. Le [cadre d’utilisation](#cadre-juridique-et-utilisation-responsable) précise ces limites.
+
+---
+
+## Installation facile (Recommandée)
+
+**Aucun outil de développement, Terminal ou connaissance technique n'est requis.**
+
+### 1. Télécharger l'installeur
+
+Téléchargez le fichier d'installation pour macOS (**`Sillage-Installer.dmg`**) depuis la section des versions :
+
+👉 **[Télécharger la dernière version de Sillage (Releases)](https://github.com/Armand-mlr/sillage-mac/releases)**
+
+### 2. Installer l'application
+
+1. Double-cliquez sur le fichier `.dmg` téléchargé pour l'ouvrir.
+2. Dans la fenêtre qui s'affiche, faites glisser l'icône **Sillage** sur le raccourci du dossier **Applications**.
+3. Éjectez l'image disque. Sillage est prêt dans votre dossier Applications.
+
+### 3. Premier lancement (Sécurité macOS / Gatekeeper)
+
+Comme Sillage est un projet open-source distribué hors du Mac App Store sans certificat payant Apple, macOS affiche un avertissement de sécurité au tout premier lancement.
+
+**Pour ouvrir l'application la première fois :**
+
+1. Ouvrez le dossier **Applications** dans le Finder.
+2. Faites un **Clic droit** (ou `Contrôle` + Clic) sur **Sillage**.
+3. Cliquez sur **Ouvrir** dans le menu contextuel.
+4. Une boîte de dialogue apparaît : confirmez en cliquant sur **Ouvrir**.
+
+> *Note : Cette validation manuelle n'est requise qu'une seule fois. Lors des utilisations suivantes, un double-clic ordinaire ou un lancement depuis Spotlight / le Launchpad fonctionnera directement.*
+
+---
+
+## Trois façons de préparer son audio
+
+| Mode | Vous fournissez | Sillage prépare |
+| :--- | :--- | :--- |
+| **Vidéo** | Le lien d’une vidéo YouTube | Un fichier WAV ou MP3, avec écoute et enregistrement |
+| **Playlist YouTube** | Le lien d’une playlist | Les fichiers sélectionnés, numérotés dans un dossier |
+| **Import Musique** | Un export XML ou texte, ou une liste de titres | Des propositions YouTube à vérifier avant conversion |
+
+```mermaid
+flowchart LR
+    A["Une vidéo"] --> D["Choisir WAV ou MP3"]
+    B["Une playlist YouTube"] --> C["Vérifier la sélection"]
+    M["Un export Musique ou une liste"] --> R["Rechercher les vidéos"]
+    R --> C
+    C --> D
+    D --> E["Convertir sur le Mac"]
+    E --> F["Retrouver ses fichiers audio"]
 ```
 
-Résultat : `dist/Sillage-<version>-<arch>.dmg`. Le DMG cible l’architecture du Mac de build : fais-le sur un Mac Apple Silicon pour `arm64`, sur un Mac Intel pour `x86_64`.
+### Ce que l’application propose
 
-Pour une diffusion sans avertissement Gatekeeper (compte Apple Developer requis) :
+- Conversion d’une vidéo à l’unité, avec lecteur audio intégré.
+- Préparation d’une playlist YouTube dans son ordre d’origine.
+- Import de playlists exportées depuis **Musique sur Mac**, en XML ou texte.
+- Saisie manuelle de titres, avec indication facultative de la version recherchée.
+- Jusqu’à cinq propositions YouTube par titre ; possibilité de choisir une alternative ou de coller une URL précise.
+- Choix du dossier de destination pour les imports dans la fenêtre native.
+- Téléchargements séquentiels, suivi de progression, arrêt et reprise.
+- Conservation des morceaux terminés lorsqu’un autre échoue.
+- Historique local et bilan texte par import téléchargé.
+- Interface française, apparence claire ou sombre suivant macOS, agrandissement jusqu’à 200 %.
 
-```sh
-xcrun notarytool store-credentials sillage   # une seule fois
-export SILLAGE_SIGN_ID="Developer ID Application: Prénom Nom (TEAMID)"
-export SILLAGE_NOTARY_PROFILE=sillage
-zsh "Construire le DMG.command"
-```
+### Ce que l’application ne fait pas
 
-yt-dlp évolue souvent pour suivre YouTube : quand les téléchargements cassent, mets à jour la version dans `requirements.txt` et reconstruis le DMG.
+- Elle ne télécharge pas les fichiers audio d’Apple Music et ne se connecte pas à votre compte Apple.
+- Elle ne contourne pas les DRM et ne propose pas de connexion pour accéder aux contenus YouTube privés ou restreints.
+- Elle ne garantit pas que la première proposition corresponde à la bonne édition, au bon remix ou au bon enregistrement.
+- Elle ne restaure pas la qualité perdue dans une source compressée.
+- Elle ne fournit pas d’autorisation de téléchargement, de diffusion ou de réutilisation des œuvres.
+- Elle n’est pas un logiciel de mixage, un éditeur audio ou un outil d’analyse BPM/tonalité.
 
-## Développement
+---
 
-```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python server.py --open          # version navigateur
-zsh "Construire Sillage.command"           # fenêtre native qui utilise .venv
-```
+## Utilisation
 
-Une seule instance peut utiliser le même historique. Dans le navigateur, le choix natif du dossier n’est pas disponible.
+### Convertir une vidéo
 
-## Windows
+1. Ouvrez l’onglet **Vidéo**.
+2. Collez une URL YouTube dans le champ prévu.
+3. Choisissez **WAV** ou **MP3**.
+4. Lancez la conversion.
+5. Écoutez le résultat, puis utilisez **Enregistrer** pour conserver une copie à l’emplacement souhaité.
 
-Installateur : `Sillage-<version>-Windows-Setup.exe` (Windows 10/11 64 bits). Il installe Sillage pour l'utilisateur, sans droits administrateur. Au premier lancement, SmartScreen peut afficher un avertissement : **Informations complémentaires → Exécuter quand même**.
+Les liens classiques `youtube.com/watch`, `youtu.be`, YouTube Music et Shorts sont reconnus.
 
-Construction : sur GitHub, onglet **Actions → Installateur Windows → Run workflow**, puis télécharge l'artefact. Pousser un tag `v*` l'ajoute aussi à la Release. Fichiers : `windows/` et `.github/workflows/windows.yml`. Données : `%LOCALAPPDATA%\Sillage`.
+### Télécharger une playlist YouTube
 
-## Utiliser les imports
+1. Ouvrez **Playlist YouTube**.
+2. Collez le lien de la playlist, puis cliquez sur **Lire la playlist**.
+3. Vérifiez les vidéos proposées et décochez celles à exclure.
+4. Choisissez le format et le dossier de destination.
+5. Cliquez sur **Télécharger**.
+6. Utilisez **Ouvrir le dossier** pour retrouver les fichiers et `Bilan Sillage.txt`.
 
-**Playlist YouTube** : colle le lien, lis la playlist, choisis les vidéos, le format et le dossier, puis lance le téléchargement. Un bilan texte accompagne les fichiers. Maximum 500 entrées ; les Mix automatiques et contenus nécessitant une connexion ne sont pas pris en charge.
+Chaque import crée son propre sous-dossier numéroté selon l’ordre de la playlist ; les fichiers déjà présents ne sont pas écrasés.
 
-**Musique sur Mac** : sélectionne une playlist, puis Fichier → Bibliothèque → Exporter la playlist → XML (ou texte). Importe ce fichier dans Sillage, lance les recherches et vérifie les propositions. Exporte une seule playlist, pas la bibliothèque entière. Limite : 2 Mo / 500 titres. L’export contient les métadonnées, pas l’audio Apple Music. Sillage ne se connecte pas au compte Apple Music.
+### Importer une playlist de Musique sur Mac
 
-Une liste manuelle utilise une ligne par morceau :
+L’export de playlist est une fonction intégrée à l'application Musique sur macOS. Il contient les **informations des titres**, pas leurs fichiers audio.
+
+**Dans Musique :**
+1. Sélectionnez une playlist dans la barre latérale.
+2. Choisissez **Fichier → Bibliothèque → Exporter la playlist**.
+3. Enregistrez-la en **XML**, ou au format texte.
+
+**Dans Sillage :**
+1. Ouvrez **Import Musique → Choisir un fichier…**.
+2. Sélectionnez l’export.
+3. Lancez **Rechercher sur YouTube**.
+4. Vérifiez les correspondances et sélectionnez les titres à télécharger.
+5. Choisissez le format, le dossier, puis lancez la conversion.
+
+### Coller une liste de titres
+
+Dans **Import Musique**, ouvrez **Ou coller une liste de titres**. Utilisez un morceau par ligne, avec le caractère `|` comme séparateur :
 
 ```text
 Artiste | Titre
-Artiste | Titre | Extended Mix
+Autre artiste | Autre titre | Extended Mix
 ```
 
-Les correspondances sont des propositions fondées sur les métadonnées, pas une reconnaissance audio. Les versions incertaines restent décochées ; même une correspondance probable mérite vérification.
+La troisième colonne est facultative (elle sert à préciser une version : remix, live, club edit...).
 
-## Qualité et usage
+### Arrêter et reprendre
 
-Le WAV est du PCM 16 bits : il évite une nouvelle compression avec perte, mais ne restaure pas les informations perdues dans la source YouTube. Le MP3 est encodé à 320 kb/s. Fréquence et canaux de la source sont conservés en WAV ; une source multicanal occupe beaucoup d’espace. Ce n’est pas une garantie de qualité studio ou un remplacement de fichiers provenant des artistes et boutiques musicales.
+Le bouton **Arrêter l’import** interrompt l’opération sans supprimer les fichiers déjà terminés. Les imports sont conservés dans **Imports récents**. Vous pouvez reprendre un import inachevé à tout moment : les pistes déjà téléchargées seront automatiquement ignorées.
 
-Utilise l’application pour les contenus que tu es autorisé à télécharger. La disponibilité d’une vidéo ne vaut pas autorisation de réutilisation. YouTube peut changer ou refuser certaines opérations.
+---
 
-## Données locales
+## WAV ou MP3 ?
 
-`~/Library/Application Support/Sillage` contient les audios, historiques et fichiers de session. Les imports produisent aussi une copie indépendante dans le dossier choisi : prévoir de l’espace pour les deux copies. Rien de cela n’est livré dans ce dépôt ; `.gitignore` exclut ces fichiers. Ne force pas leur ajout à Git.
+| | WAV | MP3 |
+| :--- | :--- | :--- |
+| **Encodage** | PCM 16 bits | MP3 à 320 kb/s |
+| **Usage courant** | Montage, édition, logiciels DJ | Écoute nomade, stockage réduit |
+| **Compression supplémentaire** | Non, après décodage de la source | Oui (compression avec perte) |
+| **Taille indicative** | ~ 10 à 12 Mo/min en stéréo | ~ 2,4 Mo/min |
 
-Internet sert aux téléchargements, recherches et miniatures YouTube. La conversion s’effectue sur le Mac. Le serveur écoute uniquement sur `127.0.0.1`, avec une clé de session, un cookie et des contrôles d’origine. Aucun service d’IA ni clé d’API n’est nécessaire pour utiliser l’app.
+**Le format de sortie ne change pas la qualité de la source d'origine.** Une source audio déjà compressée sur la plateforme restera limitée par celle-ci, même encapsulée dans un conteneur WAV.
 
-## Architecture et vérification
+---
 
-- `native/Sillage.swift` : fenêtre Cocoa/WKWebView et dialogues macOS.
-- `web/` : interface HTML/CSS/JavaScript.
-- `server.py` : serveur local et bibliothèque.
-- `worker.py`, `audio.py` : récupération avec yt-dlp et conversion FFmpeg.
-- `imports.py`, `import_worker.py`, `batches.py` : lecture des exports, recherche, file de traitement et reprise.
+## Comment fonctionne Sillage ?
 
+L’application assemble une interface utilisateur, un serveur local et des outils spécialisés dans le traitement multimédia.
+
+```mermaid
+flowchart TD
+    U["Utilisateur"] --> N["Fenêtre macOS : Swift / Cocoa"]
+    N --> W["Interface : HTML, CSS, JavaScript / WKWebView"]
+    W -->|"Requêtes locales"| S["Moteur local autonome"]
+    S --> I["Lecture des imports et file de traitement"]
+    I --> P["Processus de recherche & récupération"]
+    S --> P
+    P --> Y["yt-dlp"]
+    Y <-->|"Internet"| T["YouTube"]
+    Y --> F["FFmpeg : conversion audio"]
+    F --> D["Fichiers et historique sur le Mac"]
+    D --> S
+    S -->|"Progression"| W
+```
+
+### Le trajet d’une conversion
+
+1. L’interface transmet le lien et le format au moteur local.
+2. Le moteur initialise la file de tâches.
+3. **yt-dlp** récupère le flux audio source.
+4. **FFmpeg** décode et encode le signal en WAV ou MP3.
+5. Le fichier final est mis à disposition pour écoute et organisation dans vos dossiers.
+
+---
+
+<details>
+<summary><strong>Section Développeur : Compiler depuis les sources</strong></summary>
+
+Si vous souhaitez contribuer ou modifier le code source, vous pouvez compiler l'application manuellement.
+
+### Prérequis
+- macOS 13 ou ultérieur
+- Python 3.10+
+- Node.js 22+
+- Command Line Tools Apple (`xcode-select --install`)
+
+### Installation & Build
+```sh
+git clone https://github.com/Armand-mlr/sillage-mac.git
+cd sillage-mac
+chmod u+x "Construire Sillage.command"
+zsh "Installer Sillage.command"
+```
+
+### Exécuter les tests
 ```sh
 .venv/bin/python -m pip install -r requirements-dev.txt
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-Les tests couvrent les parseurs, les conversions FFmpeg, les accès au serveur, l’annulation, la reprise et les exports sans écrasement. Ils ne téléchargent pas de vidéos YouTube.
+</details>
 
-## Dépendances et distribution
+---
 
-[yt-dlp](https://github.com/yt-dlp/yt-dlp), [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg) et [FFmpeg](https://ffmpeg.org/) conservent leurs licences respectives. Leurs binaires ne sont pas inclus dans ce dépôt. Aucune licence de réutilisation du code propre à Sillage n’a encore été choisie : rendre ce dépôt public ne suffira pas à en faire un projet sous licence libre.
+<a id="dépannage"></a>
+## Dépannage
+
+| Problème rencontré | Solution |
+| :--- | :--- |
+| **« Développeur non vérifié » à l'ouverture** | Faites **Clic droit** sur Sillage $\rightarrow$ **Ouvrir**, puis validez avec le bouton **Ouvrir**. |
+| **L'application refuse de s'ouvrir sur macOS** | Rendez-vous dans **Réglages Système** $\rightarrow$ **Confidentialité et sécurité**, puis cliquez sur **Ouvrir quand même** en bas de page. |
+| **Échec lors de la recherche ou du téléchargement** | Vérifiez votre connexion Internet. Certaines vidéos soumises à restrictions d'âge ou supprimées ne peuvent pas être récupérées. |
+| **Une mauvaise version ou remix est proposé** | Utilisez **Voir la vidéo**, sélectionnez une alternative proposée ou collez manuellement l'URL YouTube exacte. |
+| **Espace disque insuffisant** | Les conversions WAV non compressées requièrent un espace disque conséquent. Vérifiez la place restante sur votre volume principal. |
+
+---
+
+## Cadre juridique et utilisation responsable
+
+**Destination de l’outil.** Sillage est un outil technique de récupération et de conversion audio destiné à des usages licites. Il n’a pas pour objet d’encourager la contrefaçon, le téléchargement non autorisé ou le contournement de mesures de protection.
+
+**Droits sur les contenus.** Il appartient à l’utilisateur de vérifier, avant chaque opération, qu’il dispose des droits ou autorisations nécessaires, ou qu’une exception légale est applicable. En droit français, la reproduction d’une œuvre requiert en principe l’accord des titulaires de droits ([article L. 122-4 du Code de la propriété intellectuelle](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006278911)).
+
+**Conditions des plateformes.** L’utilisateur doit respecter les [conditions d’utilisation de YouTube](https://www.youtube.com/static?template=terms&hl=fr&gl=FR).
+
+**Absence d’affiliation.** Sillage n’est ni affilié à, ni approuvé par YouTube, Google ou Apple. Les marques citées appartiennent à leurs titulaires respectifs.
