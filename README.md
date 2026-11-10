@@ -37,7 +37,7 @@ L’application fonctionne dans sa propre fenêtre Mac autonome. Les recherches 
 
 Téléchargez le fichier d'installation pour macOS (**`Sillage-Installer.dmg`**) depuis la section des versions :
 
-👉 **[Télécharger la dernière version de Sillage (Releases)](https://github.com/Armand-mlr/sillage-mac/releases)**
+👉 **[Télécharger la dernière version de Sillage (Releases)](https://github.com/Armand-mlr/sillage/releases)**
 
 ### 2. Installer l'application
 
