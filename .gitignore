@@ -1,0 +1,29 @@
+# Données et historiques locaux
+data/
+exports/
+*.wav
+*.mp3
+*.m4a
+*.webm
+*.part
+*.log
+# Environnements et compilation
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.app/
+.build/
+.DS_Store
+# Secrets et réglages personnels
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.dmg
+*.app
+dist/
+build/.build-dmg/
+windows/node/
+windows/Sillage.ico

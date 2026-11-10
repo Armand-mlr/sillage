@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="sillage-token" content="__SILLAGE_TOKEN__">
+  <meta name="color-scheme" content="light dark">
+  <title>Sillage — Le son, simplement.</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+  <script src="/batch.js" defer></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 10v4m4-8v12m5-16v20m5-16v12m4-8v4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4m-6 6-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m4 2 2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 0) scale(.95)"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.2"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 8l11-2"/><ellipse cx="6" cy="18" rx="3" ry="3"/><ellipse cx="17" cy="16" rx="3" ry="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  </svg>
+
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Sillage, accueil"><span class="brand-mark"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><span>Sillage<span class="brand-dot">.</span></span></a>
+      <div class="topbar-right"><span class="local-badge"><span aria-hidden="true"></span>Sur ton Mac</span><button class="icon-button" id="help-open" aria-label="Aide de Sillage" title="Aide"><svg aria-hidden="true"><use href="#i-info"/></svg></button></div>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="page-title"><h1 id="page-title">De la vidéo au son.</h1><p>Une vidéo, une playlist, tes morceaux. Tout simplement.</p></section>
+      <nav class="mode-tabs" role="tablist" aria-label="Source audio">
+        <button id="tab-video" role="tab" aria-selected="true" aria-controls="video-view" data-mode="video">Vidéo</button>
+        <button id="tab-playlist" role="tab" aria-selected="false" aria-controls="playlist-view" tabindex="-1" data-mode="playlist">Playlist YouTube</button>
+        <button id="tab-music" role="tab" aria-selected="false" aria-controls="music-view" tabindex="-1" data-mode="music">Import Musique</button>
+      </nav>
+      <div id="video-view" role="tabpanel" aria-labelledby="tab-video">
+      <div class="workspace">
+        <section class="converter" aria-labelledby="converter-title">
+          <div class="section-heading"><h2 id="converter-title">Nouvelle conversion</h2><span class="section-icon" aria-hidden="true"><svg><use href="#i-link"/></svg></span></div>
+          <form id="convert-form" novalidate>
+            <label class="field-label" for="video-url">Lien YouTube</label>
+            <div class="url-field"><input id="video-url" name="url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://youtube.com/watch?v=…" aria-describedby="url-hint form-error" required><button type="button" id="clear-url" class="icon-button" aria-label="Effacer le lien" title="Effacer le lien" hidden><svg aria-hidden="true"><use href="#i-close"/></svg></button><button type="button" id="paste-url" class="paste-button">Coller</button></div>
+            <p class="field-hint" id="url-hint">YouTube, YouTube Music et Shorts.</p>
+            <p class="error-message" id="form-error" role="alert" hidden></p>
+            <fieldset class="format-fieldset"><legend class="field-label">Format audio</legend>
+              <div class="formats">
+                <label class="format-option"><input type="radio" name="format" value="wav" checked><span class="format-card"><span class="format-top"><span class="format-name">WAV</span><span class="radio-dot"><svg aria-hidden="true"><use href="#i-check"/></svg></span></span><span class="format-description">Pour le montage</span><span class="format-spec">Non compressé · 16 bits</span></span></label>
+                <label class="format-option"><input type="radio" name="format" value="mp3"><span class="format-card"><span class="format-top"><span class="format-name">MP3</span><span class="radio-dot"><svg aria-hidden="true"><use href="#i-check"/></svg></span></span><span class="format-description">Pour l’écoute</span><span class="format-spec">Compact · 320 kb/s</span></span></label>
+              </div>
+            </fieldset>
+            <p class="format-explanation" id="format-explanation">Le WAV garde l’audio décodé sans compression supplémentaire.</p>
+            <div class="form-actions"><button class="primary-button" id="convert-button" type="submit"><span id="convert-label">Convertir en WAV</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></button><span class="keyboard-hint" aria-hidden="true">⌘ ↵</span></div>
+            <p class="privacy-note"><svg aria-hidden="true"><use href="#i-lock"/></svg>Conversion locale, sans compte.</p>
+          </form>
+        </section>
+        <aside class="sound-panel" id="sound-panel" aria-label="Aperçu du fichier audio">
+          <div class="panel-top"><h2>Aperçu audio</h2><span class="status-badge" id="panel-status">En attente</span></div>
+          <div class="wave-area" aria-hidden="true"><div class="wave-bars" id="wave-bars"></div><div class="wave-axis"></div></div>
+          <div class="panel-bottom" id="idle-panel"><h3>Le son prend sa place.</h3><p>Colle un lien pour commencer.<br>Ton audio apparaîtra ici.</p><div class="output-file"><span class="output-icon" aria-hidden="true"><svg><use href="#i-music"/></svg></span><div><span class="output-name">Fichier audio<span id="panel-format">.wav</span></span><span class="output-description" id="output-description">Prêt pour le montage</span></div><svg class="output-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></div></div>
+          <div class="job-panel" id="job-panel" hidden>
+            <div class="video-meta"><img id="video-thumbnail" alt="" hidden><div><p class="panel-label" id="job-author">YouTube</p><h3 id="job-title">Analyse de la vidéo…</h3><p id="job-duration"></p></div></div>
+            <div class="progress-details"><span id="job-stage" role="status" aria-live="polite">Connexion à YouTube…</span><span id="job-percent"></span></div>
+            <div class="progress-track" id="progress-track" role="progressbar" aria-label="Progression de la conversion" aria-valuemin="0" aria-valuemax="100"><span id="progress-fill"></span></div>
+            <ol class="job-steps" id="job-steps" aria-label="Étapes de la conversion"><li data-stage="analyzing">Lecture</li><li data-stage="downloading">Récupération</li><li data-stage="converting">Conversion</li></ol>
+            <p class="job-detail" id="job-detail"></p>
+            <audio controls id="audio-preview" preload="none" hidden aria-label="Écouter le fichier converti"></audio>
+            <a class="download-button" id="result-download" hidden><svg aria-hidden="true"><use href="#i-download"/></svg><span>Enregistrer le WAV…</span></a>
+            <button class="text-button" type="button" id="cancel-button">Annuler la conversion</button>
+            <button class="text-button" type="button" id="reset-button" hidden>Nouvelle conversion</button>
+          </div>
+        </aside>
+      </div>
+      <div class="quality-note"><svg aria-hidden="true"><use href="#i-info"/></svg><p>La qualité audio dépend de la source YouTube.</p><button type="button" class="inline-button" id="formats-help">Comprendre les formats</button></div>
+      <section class="library" aria-labelledby="library-title">
+        <div class="library-heading"><div><h2 id="library-title">Audios récents <span id="library-count">0</span></h2><p>Écoute ou enregistre tes conversions.</p></div><button class="secondary-button" id="open-folder" type="button" hidden><svg aria-hidden="true"><use href="#i-music"/></svg>Ouvrir le dossier</button></div>
+        <div class="library-empty" id="library-empty"><span class="empty-icon" aria-hidden="true"><svg><use href="#i-music"/></svg></span><div><h3>Ton premier audio commence par un lien.</h3><p>Les fichiers convertis resteront disponibles ici.</p></div></div>
+        <div class="library-table" id="library-table" hidden><div class="table-heading" aria-hidden="true"><span>Fichier</span><span>Format</span><span>Durée</span><span>Taille</span><span class="actions-heading">Actions</span></div><div class="library-list" id="library-list"></div></div>
+      </section>
+      </div>
+      <section id="playlist-view" role="tabpanel" aria-labelledby="tab-playlist" hidden>
+      <div id="batch-view" hidden>
+        <div class="batch-source" id="batch-setup">
+          <div class="section-heading"><div><h2 id="batch-source-title">Toute une playlist, un seul dossier.</h2><p class="section-description" id="batch-source-description">Retrouve chaque vidéo en fichier audio, dans l’ordre de la playlist.</p></div><svg aria-hidden="true"><use href="#i-music"/></svg></div>
+          <form id="batch-source-form" novalidate>
+            <div id="playlist-source">
+              <label class="field-label" for="playlist-url">Lien de la playlist YouTube</label>
+              <div class="url-field"><input id="playlist-url" type="url" autocomplete="off" spellcheck="false" placeholder="https://youtube.com/playlist?list=…"><button type="button" id="paste-playlist" class="paste-button">Coller</button></div>
+              <p class="field-hint">Playlist publique ou non répertoriée · Jusqu’à 500 vidéos · Hors mixes automatiques.</p>
+            </div>
+            <div id="music-source" hidden>
+              <div class="file-import"><span class="empty-icon" aria-hidden="true"><svg><use href="#i-music"/></svg></span><div class="file-import-info"><strong id="import-filename">Ton export de Musique</strong><p>XML ou texte, jusqu’à 2 Mo et 500 morceaux.</p></div><button type="button" class="secondary-button" id="choose-import">Choisir un fichier…</button><input id="import-file" type="file" accept=".xml,.txt,.tsv,.csv" hidden></div>
+              <details class="import-instructions"><summary>Comment exporter ma playlist depuis Musique ?</summary><p>Sur ton Mac, sélectionne une playlist dans Musique, puis <strong>Fichier → Bibliothèque → Exporter la playlist</strong>. Choisis XML ou Texte. L’export des informations est gratuit et ne contient pas les fichiers audio.</p><p>Sillage recherchera les titres sur YouTube. Tu pourras vérifier et modifier les vidéos proposées avant la conversion.</p></details>
+              <details class="manual-input"><summary>Ou coller une liste de titres</summary><label class="field-label" for="track-text">Une ligne par morceau : Artiste | Titre | Version (facultative)</label><textarea id="track-text" rows="4" spellcheck="false" placeholder="Daft Punk | Something About Us&#10;Justice | D.A.N.C.E."></textarea></details>
+            </div>
+            <button id="prepare-import" class="primary-button compact-primary" type="submit"><span>Lire la playlist</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </form>
+        </div>
+        <p class="error-message" id="batch-error" role="alert" hidden></p>
+        <section class="batch-detail" id="batch-detail" aria-labelledby="batch-title" hidden>
+          <div class="batch-heading"><div><span class="batch-eyebrow" id="batch-kind">PLAYLIST YOUTUBE</span><h2 id="batch-title"></h2><p id="batch-summary" role="status" aria-live="polite"></p></div><span class="status-badge" id="batch-status"></span></div>
+          <p class="batch-notice" id="batch-notice" hidden></p>
+          <div class="progress-track" id="batch-progress" role="progressbar" aria-label="Progression de l’import" aria-valuemin="0" aria-valuemax="100" hidden><span id="batch-progress-fill"></span></div>
+          <div class="batch-settings">
+            <div><label for="batch-format" class="field-label">Format pour cet import</label><select id="batch-format"><option value="wav">WAV · 16 bits</option><option value="mp3">MP3 · 320 kb/s</option></select></div>
+            <div class="destination"><span class="field-label">Dossier de destination</span><span id="destination-label">Sillage / exports</span><button type="button" id="choose-destination" class="inline-button">Choisir un dossier…</button></div>
+          </div>
+          <p id="match-explanation" class="match-explanation" hidden>Les correspondances sont des propositions. Les versions incertaines restent décochées : vérifie la vidéo, choisis une alternative ou colle son lien.</p>
+          <div class="batch-toolbar"><div class="selection-actions"><button class="inline-button" id="select-all" type="button">Tout sélectionner</button><span aria-hidden="true">·</span><button class="inline-button" id="select-none" type="button">Tout désélectionner</button></div><span id="selection-count"></span></div>
+          <div id="batch-items" class="batch-items"></div>
+          <div class="batch-footer"><button id="start-import" class="primary-button compact-primary" type="button">Télécharger la sélection</button><button id="stop-import" class="secondary-button" type="button" hidden>Arrêter l’import</button><button id="retry-search" class="secondary-button" type="button" hidden>Relancer les recherches manquantes</button><button id="open-export" class="secondary-button" type="button" hidden>Ouvrir le dossier</button><button id="new-import" class="inline-button" type="button">Nouvel import</button></div>
+          <p class="batch-footnote" id="batch-footnote">Un sous-dossier sera créé pour cet import. Les fichiers déjà présents ne seront pas remplacés.</p>
+        </section>
+        <section class="batch-history" id="batch-history" aria-labelledby="imports-title" hidden><div class="library-heading"><div><h2 id="imports-title">Imports récents</h2><p>Retrouve tes dossiers ou reprends un import interrompu.</p></div></div><div id="import-history-list"></div></section>
+      </div></section>
+      <section id="music-view" role="tabpanel" aria-labelledby="tab-music" hidden></section>
+    </main>
+  </div>
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">Choisir le bon format</h2><button id="help-close" class="icon-button" aria-label="Fermer l’aide"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><p>Colle le lien d’une vidéo publique, choisis ton format puis lance la conversion. Écoute le résultat et enregistre-le dans le dossier de ton choix.</p><dl><dt>WAV · Pour le montage</dt><dd>Audio non compressé, en 16 bits. La fréquence et les canaux de la source sont conservés. En stéréo, compte environ 10 à 12 Mo par minute. Le WAV ne recrée pas la qualité perdue sur YouTube.</dd><dt>MP3 · Pour l’écoute</dt><dd>Audio compressé à 320 kb/s, soit environ 2,4 Mo par minute. Un bon choix pour un fichier plus léger.</dd><dt>Où sont mes fichiers ?</dt><dd>Sillage garde une copie de chaque audio sur ton Mac. Le menu « Fichier → Afficher les fichiers audio » ouvre leur dossier. « Enregistrer » permet d’en conserver une copie ailleurs.</dd><dt>Une vidéo n’est pas accessible ?</dt><dd>Internet est nécessaire pour récupérer l’audio. Certaines vidéos privées ou restreintes ne sont pas accessibles. Les directs en cours ne sont pas pris en charge. Limite : 6 heures par vidéo.</dd></dl><p class="help-footnote">Utilise Sillage pour les contenus que tu es autorisé à télécharger.</p></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

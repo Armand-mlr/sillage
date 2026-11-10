@@ -1,0 +1,48 @@
+# Construit l'installateur Windows sur les serveurs de GitHub (pas besoin d'un PC Windows).
+# Lancement manuel : onglet Actions → "Installateur Windows" → Run workflow.
+# Sur un tag v* (ex. v1.2), l'installateur est aussi ajouté à la Release.
+name: Installateur Windows
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Dépendances
+        run: python -m pip install -r requirements.txt pyinstaller pywebview pillow
+      - name: Node.js (solveur YouTube) et icône
+        shell: pwsh
+        run: |
+          $base = "https://nodejs.org/dist/latest-v24.x"
+          $line = (Invoke-WebRequest "$base/SHASUMS256.txt").Content -split "`n" | Where-Object { $_ -match "win-x64\.zip$" }
+          $sha, $zip = $line -split "\s+"
+          Invoke-WebRequest "$base/$zip" -OutFile node.zip
+          if ((Get-FileHash node.zip -Algorithm SHA256).Hash -ne $sha.ToUpper()) { throw "Empreinte Node invalide" }
+          Expand-Archive node.zip -DestinationPath nodetmp
+          New-Item -ItemType Directory -Force windows/node | Out-Null
+          Copy-Item (Get-ChildItem nodetmp -Recurse -Filter node.exe | Select-Object -First 1).FullName windows/node/node.exe
+          python -c "from PIL import Image; Image.open('native/Sillage.icns').save('windows/Sillage.ico', sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])"
+      - name: Application (PyInstaller)
+        run: pyinstaller --noconfirm --clean --distpath dist --workpath build windows/sillage-windows.spec
+      - name: Installateur (Inno Setup)
+        shell: pwsh
+        run: |
+          $env:SILLAGE_VERSION = python -c "import plistlib; print(plistlib.load(open('native/Info.plist','rb'))['CFBundleShortVersionString'])"
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" windows\sillage.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sillage-Windows-Setup
+          path: dist/*Setup.exe
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*Setup.exe
